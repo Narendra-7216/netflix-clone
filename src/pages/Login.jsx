@@ -1,7 +1,30 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link,useNavigate } from 'react-router-dom'
+import {UserAuth} from '../context/AuthContext'
 
 const Login = () => {
+
+  const [email, setemail] = useState('')
+  const [password, setpassword] = useState('')
+  const [error, seterror] = useState('')
+  const navigate = useNavigate()
+
+  const {user,logIn} = UserAuth()  
+
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    try {
+      await logIn(email,password)
+      navigate('/')
+    } catch (error) {
+      seterror(error.message)
+      console.log(error)
+    }
+  }
+
+  
+
   return (
     <>
     <div className='w-full h-screen'>
@@ -12,9 +35,14 @@ const Login = () => {
           <div className='max-w-[320px] mx-auto py-16'>
             <h1 className='text-3xl font-bold '>Sign In</h1>
             <form className='w-full flex flex-col py-4'>
-              <input className='bg-gray-600 rounded p-4 my-2'type="email"  placeholder='email' autoComplete='email'/>
-              <input className='bg-gray-600 rounded p-4 my-2'type="password" placeholder='password' autoComplete='current-password'/>
-              <button className='bg-red-600 rounded py-4 my-2 font-bold'>Sign In</button>
+
+              {error? <p className='bg-red-400'>{error}</p>:null}
+              <input onChange={(e)=>{setemail(e.target.value)}} className='bg-gray-600 rounded p-4 my-2'type="email"  placeholder='email' autoComplete='email'/>
+
+              <input onChange={(e)=>{setpassword(e.target.value)}} className='bg-gray-600 rounded p-4 my-2'type="password" placeholder='password' autoComplete='current-password'/>
+
+              <button  onClick={handleSubmit}  className='bg-red-600 rounded py-4 my-2 font-bold'>Sign In</button>
+
               <div className='flex justify-between items-center text-sm text-gray-600'>
                 <p className='py-2'><input className='mr-2' type="checkbox"/>Remember me</p>
                 <p>Need Help?</p>
